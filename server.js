@@ -1,5 +1,7 @@
 'use strict';
 
+// var require = require('requirejs');
+
 // application dependencies
 const express = require('express');
 const cors = require('cors');
@@ -44,3 +46,24 @@ function Location(data) {
 app.listen(PORT, () => {
   console.log(`listening on ${PORT}`);
 });
+
+// WEATHER SERVER//
+
+app.get('/weather', (request, response) => {
+  console.log('my request object:', request.body);
+  const weatherData = searchToData(request.query.data);
+  response.send(weatherData);
+});
+
+function searchToData(query) {
+  const weatherServer = require('./data/weather.json');
+  const weather = new Weather(weatherServer.daily);
+  weather.search_query = query;
+  return weather;
+}
+
+function Weather(data) {
+  this.timezone = data.timezone;
+  this.time = data.time;
+  this.forcast = data.summary;
+}
